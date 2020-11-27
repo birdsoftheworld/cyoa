@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>
+		A Story
+	</title>
+	<script src="story.js"></script>
+	<script>
+		"use strict";
+		// story name
+		var name;
+		// global page ID to prevent caching when fetching files
+		var randomID = Math.random().toString().split("0.").join("");
+
+		function checkEnter(event) {
+			// allow pressing enter to activate name input box
+			if (event.key === "Enter") {
+				setName();
+			}
+		}
+
+		function setName() {
+			elem('submitName').style.display = 'none';
+			// don't allow names to contain HTML special characters
+			name = elem('name').value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+			loadPage(1);
+		}
+
+		function elem(element) {
+			return document.getElementById(element);
+		}
+
+		function restart() {
+			// restart the game
+			// set background to normal color
+			var forestBG = elem("forest-bg");
+			forestBG.classList.remove("bw");
+			forestBG.classList.add("bwreverse");
+			elem("alt-bg").style.filter = "";
+			// remove "restart" button
+			var restartButton = elem("restartButton");
+			restartButton.classList.remove("fadeIn");
+			restartButton.style.display = "none";
+			restartButton.onclick = undefined;
+			loadPage(1);
+		}
+
+		async function loadPage(page) {
+			var main = elem("main");
+			elem("bg-bar").classList.remove("menu");
+			elem("forest-bg").classList.remove("menu");
+			// normal pages
+			if (typeof (page) === "number") {
+				// chapter content is stored in both "chapterfiles" and a main story.js file
+				// try fetching chapterfile, if it doesn't exist, use normal chapter
+				try {
+					var filecontent = await fetch("chapterfiles/" + page.toString() + ".chapterfile" + "?id=" + randomID);
+					main.innerHTML = fixLinks(await filecontent.json());
+				} catch {
+					main.innerHTML = fixLinks(story[page]);
+				}
+			}
+			// custom pages
+			if (typeof (page) === "string") {
+				switch (page) {
+					case "menu":
+						elem("bg-bar").classList.add("menu");
+						elem("forest-bg").classList.add("menu");
+						main.innerHTML = menuItems[0];
+						break;
+					case "name":
+						main.innerHTML = menuItems[1];
+						break;
+					default:
+						main.innerHTML = menuItems[0];
+				}
+			}
+			// reset scroll bar
+			elem("bg-bar").scrollTop = 0;
+			if (page == 1) {
+				elem("alt-bg").style.filter = "";
+			}
+		}
+
+		function fixLinks(text) {
+			// create buttons / styling
+			var newText = text
+				.replace(/\[\[/g, "<div class='btn-container'><div class='goodbutton' onclick='javascript:loadPage(")
+				.replace(/->/g, ");'>")
+				.replace(/\]\]/g, "</div></div> /")
+				.replace(/ \//g, "<br> __")
+				.replace(/__/g, "<div style='margin-top: 7px'></div>")
+				.replace(/\(\*/g, "<b>")
+				.replace(/\*\)/g, "</b>")
+				.replace(/\(\//g, "<i>")
+				.replace(/\/\)/g, "</i>")
+				.replace(/\$name/g, name);
+			// death pages
+			if (newText.match("You are dead.") !== null) {
+				// black & white background
+				var forestBG = elem("forest-bg");
+				forestBG.classList.remove("bwreverse");
+				forestBG.classList.add("bw");
+				elem("alt-bg").style.filter = "grayscale(100%)";
+				// restart button fade-in
+				var restartButton = elem("restartButton");
+				restartButton.classList.add("fadeIn");
+				restartButton.style.display = "inline";
+				restartButton.onclick = () => restart();
+				// special font & animation for "You are dead."
+				newText = newText.replace("You are dead.", "<p class='dead'><b>You are dead.</b></p>");
+			}
+			return newText;
+		}
+	</script>
+	<link rel="stylesheet" type="text/css" href="formatting.css">
+</head>
+
+<body onclick="audioElement.play();">
+	<audio id="audio">
+		<source src="Forest 2.mp3" type="audio/mp3">
+	</audio>
+	<div class="background" id="alt-bg">
+	</div>
+	<div class="background" id="forest-bg" ondragstart="return false;">
+	</div>
+
+	<div id="align-bar">
+		<div id="bg-bar">
+			<p class="text" id="main">
+			</p>
+		</div>
+		<br>
+		<div id="restartButtonContainer">
+			<div class="goodbutton" id="restartButton">Restart?</div>
+		</div>
+	</div>
+	<script>
+		// stop background audio playing in different tabs / windows
+		window.onblur = () => audioElement.pause();
+		window.onfocus = () => audioElement.play();
+		loadPage("menu");
+		var audioElement = elem("audio");
+		audioElement.volume = ".02";
+		audioElement.loop = true;
+	</script>
+</body>
+</html>

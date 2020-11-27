@@ -1,0 +1,192 @@
+@font-face {
+    font-family: Georgia;
+    src: url(Georgia.ttf);
+}
+
+@font-face {
+    font-family: abhayaLibre;
+    src: url(AbhayaLibre.ttf);
+}
+
+@keyframes fadetoblack {
+    from {
+        filter: none;
+    }
+
+    to {
+        filter: blur(5px) grayscale(100%);
+    }
+}
+
+@keyframes fadetonormal {
+    from {
+        filter: blur(5px) grayscale(100%);
+    }
+
+    to {
+        filter: none;
+    }
+}
+
+@keyframes fadein {
+    70% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.dead {
+    color: red;
+    animation-name: fadeinblur;
+    animation-duration: 5s;
+    animation-fill-mode: both;
+    text-align: center;
+}
+
+.btn-container {
+    transform: translate(0, 10px);
+    text-align: center;
+}
+
+.background {
+    background-image: url(forest.png);
+    position: fixed;
+    display: block;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: transparent;
+    background-size: 100% 100%;
+    z-index: 0;
+}
+
+.background.bw {
+    animation-name: fadetoblack;
+    animation-duration: 2s;
+    animation-direction: normal;
+    animation-fill-mode: both;
+}
+
+.background.bwreverse {
+    animation-name: fadetonormal;
+    animation-duration: 1s;
+    animation-direction: normal;
+    animation-fill-mode: both;
+}
+
+.text {
+    font-size: 18px;
+    color: white;
+}
+
+.goodbutton {
+    transform: scale(1.25) translateY(7px);
+    border-width: 2px;
+    border-radius: 2px;
+    border-color: white;
+    color: white;
+    transition: color 1s;
+    font-family: "abhayaLibre";
+    font-weight: lighter;
+    display: inline-block;
+    border-style: solid;
+    padding: 5px;
+    font-size: 14px;
+    cursor: default;
+}
+
+.goodbutton:hover {
+    color: rgb(150, 0, 0);
+}
+
+.goodbutton.menu {
+    -webkit-transform: scale(2.25);
+    transform: scale(2.25);
+}
+
+.textbox {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 0.75em;
+    color: white;
+    transition: background-color .25s;
+    background-color: transparent;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 2px;
+    padding: 5px;
+}
+
+.textbox:focus {
+    background-color: rgba(100, 100, 100, 0.5);
+}
+
+.textbox::placeholder {
+    color: lightgray;
+    font-style: italic;
+}
+
+#align-bar {
+    padding: 15px;
+    text-align: justify;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#bg-bar {
+    background-color: rgba(30, 30, 30, 0.2);
+    padding-top: 1px;
+    padding-bottom: 7px;
+    padding-right: 25px;
+    padding-left: 25px;
+    max-width: 750px;
+    max-height: 510px;
+    overflow-y: auto;
+    border-radius: 7px;
+    scrollbar-width: thin;
+    scrollbar-color: grey white;
+    scroll-behavior: auto;
+}
+
+#bg-bar.menu {
+    padding-right: 10px;
+    padding-left: 0px;
+    position: fixed;
+    top: 100%;
+    width: 100%;
+    overflow: visible;
+    background-color: transparent;
+    max-width: none;
+}
+
+#restartButton {
+    opacity: 0;
+}
+
+#restartButton.fadeIn {
+    animation-name: fadein;
+    animation-fill-mode: both;
+    animation-duration: 5s;
+}
+
+#restartButtonContainer {
+    text-align: center;
+}
+
+#forest-bg.menu {
+    background-image: url(altarpoint.png);
+}
